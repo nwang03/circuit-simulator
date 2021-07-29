@@ -1,13 +1,88 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
+} */
+
+/* .navStyle {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: rgb(54, 49, 79);
+    color: white;
+}
+
+.navLinks {
+    width: 50%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    list-style: none;
+}
+
+.dropdownMenu {
+    list-style: none;
+    color: white;
+} */
+
+.rotate {
+    animation: spin 20s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#homePage {
+    color: white;
+    text-align: center;
+}
+
+#buttonStyle {
+    padding: 10px 10px 10px 10px;
+}
+
+.canvasStyle {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+#bottom-layer {
+    z-index: 1;
+}
+
+#top-layer {
+    z-index: 2;
+}
+
+#graph-layer {
+    z-index: 3;
+}
+
+.controlMenu {
+    text-align: center;
+    margin-top: 650px;
+}
+
+#tsparticles {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
 }
