@@ -160,6 +160,22 @@ function RCpage() {
         context.lineTo(350, 50);
         context.stroke();
 
+        // draw lines for switch
+        context.lineWidth = 5;
+        context.moveTo(130, 50);
+        context.lineTo(130, 400);
+        context.stroke();
+        context.beginPath();
+        context.arc(130, 400, 5, 0, 2 * Math.PI);
+        context.fillStyle = "rgb(211, 211, 211)";
+        context.fill();
+        context.beginPath();
+        context.arc(130, 450, 5, 0, Math.PI * 2);
+        context.fill();
+        context.beginPath();
+        context.arc(170, 450, 5, 0, Math.PI * 2);
+        context.fill();
+
         // draw battery
         context.fillStyle = "rgb(211, 211, 211)";
         context.fillRect(20, 225, 60, 10);
@@ -698,7 +714,6 @@ function RCpage() {
                     type="text"
                     placeholder="Battery Voltage (Volts)"
                     name="batteryVoltage"
-                    // value={batteryVoltage}
                     onChange={handleChange}
                 />
                 <br />
@@ -707,7 +722,6 @@ function RCpage() {
                     type="text"
                     placeholder="Capacitance (Farads)"
                     name="capacitance"
-                    // value={capacitance}
                     onChange={handleChange}
                 />
                 <br />
@@ -716,7 +730,6 @@ function RCpage() {
                     type="text"
                     placeholder="Resistance (Ohms)"
                     name="resistance"
-                    // value={resistance}
                     onChange={handleChange}
                 />
                 <br />
