@@ -11,6 +11,7 @@ function RCpage() {
     const [batteryVoltage, setBatteryVoltage] = useState(10);
     const [capacitance, setCapacitance] = useState(10);
     const [resistance, setResistance] = useState(1);
+    const [initialCharge, setInitialCharge] = useState(10);
     const [graphType, setGraphType] = useState("current");
     const [maxCurrent, setMaxCurrent] = useState(batteryVoltage / resistance);
     const [maxCapacitorVoltage, setMaxCapacitorVoltage] =
@@ -22,6 +23,7 @@ function RCpage() {
         useState(batteryVoltage);
     const [max, setMax] = useState(maxCurrent);
     const [timeRange, setTimeRange] = useState(450);
+    const [isDischarging, setIsDischarging] = useState(false);
 
     useEffect(() => {
         draw();
@@ -34,6 +36,8 @@ function RCpage() {
         capacitance,
         resistance,
         timeRange,
+        isDischarging,
+        initialCharge,
     ]);
 
     function handleChange(event) {
@@ -58,67 +62,133 @@ function RCpage() {
             setTimeChange(parseInt(value));
         } else if (name === "batteryVoltage") {
             if (Number.isFinite(parseInt(value))) setBatteryVoltage(value);
-            setMaxCurrent(value / resistance);
-            setMaxCapacitorVoltage(value);
-            setMaxCapacitorCharge(capacitance * value);
-            setMaxResistorVoltage(value);
-            switch (graphType) {
-                case "current":
-                    setMax(value / resistance);
-                    break;
-                case "charge":
-                    setMax(capacitance * value);
-                    break;
-                case "cvoltage":
-                    setMax(value);
-                    break;
-                case "rvoltage":
-                    setMax(value);
-                    break;
+            if (!isDischarging) {
+                setMaxCurrent(value / resistance);
+                setMaxCapacitorVoltage(value);
+                setMaxCapacitorCharge(capacitance * value);
+                setMaxResistorVoltage(value);
+                switch (graphType) {
+                    case "current":
+                        setMax(value / resistance);
+                        break;
+                    case "charge":
+                        setMax(capacitance * value);
+                        break;
+                    case "cvoltage":
+                        setMax(value);
+                        break;
+                    case "rvoltage":
+                        setMax(value);
+                        break;
+                }
             }
         } else if (name === "capacitance") {
             if (Number.isFinite(parseInt(value))) setCapacitance(value);
-            setMaxCurrent(batteryVoltage / resistance);
-            setMaxCapacitorVoltage(batteryVoltage);
-            setMaxCapacitorCharge(batteryVoltage * value);
-            setMaxResistorVoltage(batteryVoltage);
-            switch (graphType) {
-                case "current":
-                    setMax(batteryVoltage / resistance);
-                    break;
-                case "charge":
-                    setMax(batteryVoltage * value);
-                    break;
-                case "cvoltage":
-                    setMax(batteryVoltage);
-                    break;
-                case "rvoltage":
-                    setMax(batteryVoltage);
-                    break;
+            if (!isDischarging) {
+                setMaxCurrent(batteryVoltage / resistance);
+                setMaxCapacitorVoltage(batteryVoltage);
+                setMaxCapacitorCharge(batteryVoltage * value);
+                setMaxResistorVoltage(batteryVoltage);
+                switch (graphType) {
+                    case "current":
+                        setMax(batteryVoltage / resistance);
+                        break;
+                    case "charge":
+                        setMax(batteryVoltage * value);
+                        break;
+                    case "cvoltage":
+                        setMax(batteryVoltage);
+                        break;
+                    case "rvoltage":
+                        setMax(batteryVoltage);
+                        break;
+                }
+            } else {
+                setMaxCurrent(-initialCharge / (resistance * value));
+                setMaxCapacitorVoltage(initialCharge / value);
+                setMaxCapacitorCharge(initialCharge);
+                setMaxResistorVoltage(initialCharge / value);
+                switch (graphType) {
+                    case "current":
+                        setMax(-initialCharge / (resistance * value));
+                        break;
+                    case "charge":
+                        setMax(initialCharge);
+                        break;
+                    case "cvoltage":
+                        setMax(initialCharge / value);
+                        break;
+                    case "rvoltage":
+                        setMax(initialCharge / value);
+                        break;
+                }
             }
         } else if (name === "resistance") {
             if (Number.isFinite(parseInt(value))) setResistance(value);
-            setMaxCurrent(batteryVoltage / value);
-            setMaxCapacitorVoltage(batteryVoltage);
-            setMaxCapacitorCharge(batteryVoltage * capacitance);
-            setMaxResistorVoltage(batteryVoltage);
-            switch (graphType) {
-                case "current":
-                    setMax(batteryVoltage / value);
-                    break;
-                case "charge":
-                    setMax(batteryVoltage * capacitance);
-                    break;
-                case "cvoltage":
-                    setMax(batteryVoltage);
-                    break;
-                case "rvoltage":
-                    setMax(batteryVoltage);
-                    break;
+            if (!isDischarging) {
+                setMaxCurrent(batteryVoltage / value);
+                setMaxCapacitorVoltage(batteryVoltage);
+                setMaxCapacitorCharge(batteryVoltage * capacitance);
+                setMaxResistorVoltage(batteryVoltage);
+                switch (graphType) {
+                    case "current":
+                        setMax(batteryVoltage / value);
+                        break;
+                    case "charge":
+                        setMax(batteryVoltage * capacitance);
+                        break;
+                    case "cvoltage":
+                        setMax(batteryVoltage);
+                        break;
+                    case "rvoltage":
+                        setMax(batteryVoltage);
+                        break;
+                }
+            } else {
+                setMaxCurrent(-initialCharge / (value * capacitance));
+                setMaxCapacitorVoltage(initialCharge / capacitance);
+                setMaxCapacitorCharge(initialCharge);
+                setMaxResistorVoltage(initialCharge / capacitance);
+                switch (graphType) {
+                    case "current":
+                        setMax(-initialCharge / (value * capacitance));
+                        break;
+                    case "charge":
+                        setMax(initialCharge);
+                        break;
+                    case "cvoltage":
+                        setMax(initialCharge / capacitance);
+                        break;
+                    case "rvoltage":
+                        setMax(initialCharge / capacitance);
+                        break;
+                }
             }
         } else if (name === "timeRange") {
             clearGraph();
             setTimeRange(parseInt(value));
+        } else if (name === "initialCharge") {
+            if (Number.isFinite(parseInt(value))) setInitialCharge(value);
+            if (isDischarging) {
+                setMaxCurrent(-value / (resistance * capacitance));
+                setMaxCapacitorVoltage(value / capacitance);
+                setMaxCapacitorCharge(value);
+                setMaxResistorVoltage(value / capacitance);
+                switch (graphType) {
+                    case "current":
+                        setMax(-value / (resistance * capacitance));
+                        break;
+                    case "charge":
+                        setMax(value);
+                        break;
+                    case "cvoltage":
+                        setMax(value / capacitance);
+                        break;
+                    case "rvoltage":
+                        setMax(value / capacitance);
+                        break;
+                }
+            }
         }
         window.cancelAnimationFrame(requestID);
         paused = true;
@@ -169,7 +239,17 @@ function RCpage() {
         context.arc(130, 400, 5, 0, 2 * Math.PI);
         context.fillStyle = "rgb(211, 211, 211)";
         context.fill();
+        if (isDischarging) {
+            context.fillStyle = "rgb(255, 255, 237)";
+            context.fillRect(135, 445, 30, 10);
+            context.beginPath();
+            context.moveTo(170, 450);
+            context.lineTo(130, 400);
+            context.strokeStyle = "rgb(211, 211, 211)";
+            context.stroke();
+        }
         context.beginPath();
+        context.fillStyle = "rgb(211, 211, 211)";
         context.arc(130, 450, 5, 0, Math.PI * 2);
         context.fill();
         context.beginPath();
@@ -177,11 +257,13 @@ function RCpage() {
         context.fill();
 
         // draw battery
+        context.beginPath();
         context.fillStyle = "rgb(211, 211, 211)";
         context.fillRect(20, 225, 60, 10);
         context.fillRect(30, 265, 40, 10);
 
         // draw plus and minus sign next to battery
+        context.beginPath();
         context.lineWidth = 3;
         context.moveTo(75, 195);
         context.lineTo(75, 215);
@@ -242,11 +324,14 @@ function RCpage() {
         context.lineCap = "round";
         context.lineWidth = 15;
         if (!paused) {
-            context.lineDashOffset += calculateCurrent();
+            if (isDischarging)
+                context.lineDashOffset += calculateCurrentDischarge();
+            else context.lineDashOffset += calculateCurrent();
             time += timeChange;
         }
         context.strokeStyle = "rgb(135, 206, 235)";
-        context.strokeRect(50, 50, 400, 400);
+        if (isDischarging) context.strokeRect(130, 50, 320, 400);
+        else context.strokeRect(50, 50, 400, 400);
         context.setLineDash([]);
         context.lineCap = "butt";
 
@@ -273,24 +358,41 @@ function RCpage() {
         context.lineWidth = 5;
 
         let yValue;
-        switch (graphType) {
-            case "current":
-                yValue = calculateCurrent();
-                break;
-            case "charge":
-                yValue = calculateCharge();
-                break;
-            case "cvoltage":
-                yValue = calculateCapacitorVoltage();
-                break;
-            case "rvoltage":
-                yValue = calculateResistorVoltage();
-                break;
+        if (isDischarging) {
+            switch (graphType) {
+                case "current":
+                    yValue = calculateCurrentDischarge();
+                    break;
+                case "charge":
+                    yValue = calculateChargeDischarge();
+                    break;
+                case "cvoltage":
+                    yValue = calculateCapacitorVoltageDischarge();
+                    break;
+                case "rvoltage":
+                    yValue = calculateResistorVoltageDischarge();
+                    break;
+            }
+        } else {
+            switch (graphType) {
+                case "current":
+                    yValue = calculateCurrent();
+                    break;
+                case "charge":
+                    yValue = calculateCharge();
+                    break;
+                case "cvoltage":
+                    yValue = calculateCapacitorVoltage();
+                    break;
+                case "rvoltage":
+                    yValue = calculateResistorVoltage();
+                    break;
+            }
         }
 
         context.moveTo(
             600 + time,
-            250 - (yValue * 200) / max // graph
+            250 - (yValue * 200) / Math.abs(max) // graph
         );
         graphReset = 0;
         drawYAxis();
@@ -299,19 +401,36 @@ function RCpage() {
     function graph() {
         const context = document.getElementById("graph-layer").getContext("2d");
         let yValue;
-        switch (graphType) {
-            case "current":
-                yValue = calculateCurrent();
-                break;
-            case "charge":
-                yValue = calculateCharge();
-                break;
-            case "cvoltage":
-                yValue = calculateCapacitorVoltage();
-                break;
-            case "rvoltage":
-                yValue = calculateResistorVoltage();
-                break;
+        if (isDischarging) {
+            switch (graphType) {
+                case "current":
+                    yValue = calculateCurrentDischarge();
+                    break;
+                case "charge":
+                    yValue = calculateChargeDischarge();
+                    break;
+                case "cvoltage":
+                    yValue = calculateCapacitorVoltageDischarge();
+                    break;
+                case "rvoltage":
+                    yValue = calculateResistorVoltageDischarge();
+                    break;
+            }
+        } else {
+            switch (graphType) {
+                case "current":
+                    yValue = calculateCurrent();
+                    break;
+                case "charge":
+                    yValue = calculateCharge();
+                    break;
+                case "cvoltage":
+                    yValue = calculateCapacitorVoltage();
+                    break;
+                case "rvoltage":
+                    yValue = calculateResistorVoltage();
+                    break;
+            }
         }
         context.fillStyle = "rgb(255, 255, 237)";
         context.fillRect(0, 480, 1100, 100);
@@ -325,30 +444,61 @@ function RCpage() {
         context.fillText("Capacitance: " + capacitance + " farads", 50, 525);
         context.fillText("Resistance: " + resistance + " ohms", 50, 550);
         context.fillStyle = "rgb(255, 0, 255)";
-        context.fillText(
-            "Current: " + calculateCurrent().toFixed(2) + " amps",
-            400,
-            500
-        );
-        context.fillText(
-            "Capacitor Charge: " + calculateCharge().toFixed(2) + " coulombs",
-            400,
-            525
-        );
-        context.fillText(
-            "Capacitor Voltage: " +
-                calculateCapacitorVoltage().toFixed(2) +
-                " volts",
-            400,
-            550
-        );
-        context.fillText(
-            "Resistor Voltage: " +
-                calculateResistorVoltage().toFixed(2) +
-                " volts",
-            400,
-            575
-        );
+        if (isDischarging) {
+            context.fillText(
+                "Current: " + calculateCurrentDischarge().toFixed(2) + " amps",
+                400,
+                500
+            );
+            context.fillText(
+                "Capacitor Charge: " +
+                    calculateChargeDischarge().toFixed(2) +
+                    " coulombs",
+                400,
+                525
+            );
+            context.fillText(
+                "Capacitor Voltage: " +
+                    calculateCapacitorVoltageDischarge().toFixed(2) +
+                    " volts",
+                400,
+                550
+            );
+            context.fillText(
+                "Resistor Voltage: " +
+                    calculateResistorVoltageDischarge().toFixed(2) +
+                    " volts",
+                400,
+                575
+            );
+        } else {
+            context.fillText(
+                "Current: " + calculateCurrent().toFixed(2) + " amps",
+                400,
+                500
+            );
+            context.fillText(
+                "Capacitor Charge: " +
+                    calculateCharge().toFixed(2) +
+                    " coulombs",
+                400,
+                525
+            );
+            context.fillText(
+                "Capacitor Voltage: " +
+                    calculateCapacitorVoltage().toFixed(2) +
+                    " volts",
+                400,
+                550
+            );
+            context.fillText(
+                "Resistor Voltage: " +
+                    calculateResistorVoltage().toFixed(2) +
+                    " volts",
+                400,
+                575
+            );
+        }
         context.fillStyle = "rgb(148, 0, 211)";
         context.fillText("X-axis: " + time + " seconds", 800, 500);
         context.fillText("Y-axis: " + graphType, 800, 525);
@@ -358,7 +508,7 @@ function RCpage() {
             550
         );
         context.fillText(
-            "Max Charge: " + maxCapacitorCharge.toFixed(2) + " coulombs",
+            "Max Charge: " + parseFloat(maxCapacitorCharge).toFixed(2) + " coulombs",
             800,
             575
         );
@@ -456,7 +606,7 @@ function RCpage() {
                 }
         }
         if (time % resetNumber === 0 && !paused && timeChange !== 0) {
-            context.moveTo(600, 250 - (yValue * 200) / max); // graph
+            context.moveTo(600, 250 - (yValue * 200) / Math.abs(max)); // graph
             clearGraph();
             context.beginPath();
             graphReset++;
@@ -465,7 +615,7 @@ function RCpage() {
         if (!paused) {
             context.lineTo(
                 600 + (time % resetNumber) * (450 / timeRange),
-                250 - (yValue * 200) / max // graph
+                250 - (yValue * 200) / Math.abs(max) // graph
             );
             context.stroke();
         }
@@ -478,14 +628,14 @@ function RCpage() {
             ctx.fillStyle = "black";
             ctx.font = "20px serif";
             ctx.textAlign = "end";
-            ctx.fillText((i / 4) * max, 590, 250 - i * 50);
+            ctx.fillText(Math.abs((i / 4) * max), 590, 250 - i * 50);
         }
         for (let i = 1; i <= 4; i++) {
             ctx.beginPath();
             ctx.fillStyle = "black";
             ctx.font = "20px serif";
             ctx.textAlign = "end";
-            ctx.fillText((-i / 4) * max, 590, 250 + i * 50);
+            ctx.fillText(-1 * Math.abs((i / 4) * max), 590, 250 + i * 50);
         }
     }
 
@@ -597,6 +747,33 @@ function RCpage() {
         );
     }
 
+    function calculateCurrentDischarge() {
+        return (
+            (-initialCharge / (resistance * capacitance)) *
+            Math.pow(Math.E, -time / (resistance * capacitance))
+        );
+    }
+
+    function calculateChargeDischarge() {
+        return (
+            initialCharge * Math.pow(Math.E, -time / (resistance * capacitance))
+        );
+    }
+
+    function calculateCapacitorVoltageDischarge() {
+        return (
+            (initialCharge / capacitance) *
+            Math.pow(Math.E, -time / (resistance * capacitance))
+        );
+    }
+
+    function calculateResistorVoltageDischarge() {
+        return (
+            (initialCharge / capacitance) *
+            Math.pow(Math.E, -time / (resistance * capacitance))
+        );
+    }
+
     return (
         <div>
             <TopMenu />
@@ -645,9 +822,71 @@ function RCpage() {
                     }}
                 >
                     Reset
+                </Button>{" "}
+                <Button
+                    variant="secondary"
+                    onClick={() => {
+                        window.cancelAnimationFrame(requestID);
+                        paused = true;
+                        document
+                            .getElementById("top-layer")
+                            .getContext("2d").lineDashOffset = 0;
+                        clearGraph();
+                        if (isDischarging) {
+                            setIsDischarging(false);
+                            setMaxCurrent(batteryVoltage / resistance);
+                            setMaxCapacitorVoltage(batteryVoltage);
+                            setMaxCapacitorCharge(batteryVoltage * capacitance);
+                            setMaxResistorVoltage(batteryVoltage);
+                            switch (graphType) {
+                                case "current":
+                                    setMax(batteryVoltage / resistance);
+                                    break;
+                                case "charge":
+                                    setMax(batteryVoltage * capacitance);
+                                    break;
+                                case "cvoltage":
+                                    setMax(batteryVoltage);
+                                    break;
+                                case "rvoltage":
+                                    setMax(batteryVoltage);
+                                    break;
+                            }
+                        } else {
+                            setIsDischarging(true);
+                            setMaxCurrent(
+                                -initialCharge / (resistance * capacitance)
+                            );
+                            setMaxCapacitorVoltage(initialCharge / capacitance);
+                            setMaxCapacitorCharge(initialCharge);
+                            setMaxResistorVoltage(initialCharge / capacitance);
+                            switch (graphType) {
+                                case "current":
+                                    setMax(
+                                        -initialCharge /
+                                            (resistance * capacitance)
+                                    );
+                                    break;
+                                case "charge":
+                                    setMax(initialCharge);
+                                    break;
+                                case "cvoltage":
+                                    setMax(initialCharge / capacitance);
+                                    break;
+                                case "rvoltage":
+                                    setMax(initialCharge / capacitance);
+                                    break;
+                            }
+                        }
+                    }}
+                >
+                    Move Switch
                 </Button>
                 <br />
                 <br />
+                <h6>
+                    Current State: {isDischarging ? "Discharging" : "Charging"}
+                </h6>
                 Measuring: {graphType}
                 <br />
                 <label>
@@ -730,6 +969,15 @@ function RCpage() {
                     type="text"
                     placeholder="Resistance (Ohms)"
                     name="resistance"
+                    onChange={handleChange}
+                />
+                <br />
+                Capacitor Initial Charge - only for discharging{" "}
+                {" (" + initialCharge + " coulombs): "}
+                <input
+                    type="text"
+                    placeholder="Charge (Coulombs)"
+                    name="initialCharge"
                     onChange={handleChange}
                 />
                 <br />
