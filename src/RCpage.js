@@ -208,8 +208,6 @@ function RCpage() {
 
         // draw circuit sqaure
         context.lineWidth = 5;
-        // context.strokeStyle = "rgb(255, 212, 255)";
-        // context.strokeStyle = "rgb(235, 135, 156)";
         context.strokeStyle = "rgb(211, 211, 211)";
         context.strokeRect(50, 50, 400, 400);
 
@@ -434,6 +432,8 @@ function RCpage() {
         }
         context.fillStyle = "rgb(255, 255, 237)";
         context.fillRect(0, 480, 1100, 100);
+        context.fillRect(160, 85, context.measureText(resistance + " Ω").width, 40);
+        context.fillRect(375, 235, context.measureText(capacitance + " F").width, 40);
         context.fillStyle = "rgb(0, 0, 139)";
         context.font = "20px serif";
         context.fillText(
@@ -443,7 +443,12 @@ function RCpage() {
         );
         context.fillText("Capacitance: " + capacitance + " farads", 50, 525);
         context.fillText("Resistance: " + resistance + " ohms", 50, 550);
+        context.fillStyle = "rgb(0, 100, 0)";
+        context.font = "40px serif";
+        context.fillText(resistance + " Ω", 160, 120);
+        context.fillText(capacitance + " F", 375, 270);
         context.fillStyle = "rgb(255, 0, 255)";
+        context.font = "20px serif";
         if (isDischarging) {
             context.fillText(
                 "Current: " + calculateCurrentDischarge().toFixed(2) + " amps",
@@ -508,7 +513,9 @@ function RCpage() {
             550
         );
         context.fillText(
-            "Max Charge: " + parseFloat(maxCapacitorCharge).toFixed(2) + " coulombs",
+            "Max Charge: " +
+                parseFloat(maxCapacitorCharge).toFixed(2) +
+                " coulombs",
             800,
             575
         );
