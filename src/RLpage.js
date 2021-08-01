@@ -208,27 +208,29 @@ function RLpage() {
 
         // draw circuit sqaure
         context.lineWidth = 5;
-        // context.strokeStyle = "rgb(255, 212, 255)";
-        // context.strokeStyle = "rgb(235, 135, 156)";
         context.strokeStyle = "rgb(211, 211, 211)";
         context.strokeRect(50, 50, 400, 400);
 
-        // clear gaps for battery, resistor, and capacitor
+        // clear gaps for resistor, battery, then capacitor
         context.fillStyle = "rgb(255, 255, 237)";
-        context.fillRect(150, 45, 200, 10);
+        context.fillRect(140, 45, 220, 10);
         context.fillRect(40, 225, 20, 50);
         context.fillRect(440, 200, 20, 100);
 
         // draw zig-zag resistor
         context.beginPath();
-        context.lineJoin = "miter";
-        context.moveTo(150, 50);
-        for (let i = 0; i < 10; i++) {
-            let j = i % 2 ? 1 : -1;
-            context.lineTo(160 + i * 20, 50 + 25 * j);
+        context.lineJoin = "round";
+        context.moveTo(170, 50);
+        for(let i = 0; i < 5; i++){
+            context.beginPath();
+            context.arc(170 + 40 * i, 50, 30, 0, Math.PI, 1);
+            context.stroke();
         }
-        context.lineTo(350, 50);
-        context.stroke();
+        for(let i = 0; i < 4; i++){
+            context.beginPath();
+            context.ellipse(190 + i * 40, 50, 10, 30, 0, 0, Math.PI, false);
+            context.stroke();
+        }
 
         // draw lines for switch
         context.lineWidth = 5;
