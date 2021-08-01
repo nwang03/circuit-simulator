@@ -57,6 +57,8 @@ function RCpage() {
                 case "rvoltage":
                     setMax(maxResistorVoltage);
                     break;
+                default:
+                    setMax(maxCurrent);
             }
         } else if (name === "timeChange") {
             setTimeChange(parseInt(value));
@@ -80,6 +82,8 @@ function RCpage() {
                     case "rvoltage":
                         setMax(value);
                         break;
+                    default:
+                        setMax(value / resistance);
                 }
             }
         } else if (name === "capacitance") {
@@ -102,6 +106,8 @@ function RCpage() {
                     case "rvoltage":
                         setMax(batteryVoltage);
                         break;
+                    default:
+                        setMax(batteryVoltage / resistance);
                 }
             } else {
                 setMaxCurrent(-initialCharge / (resistance * value));
@@ -121,6 +127,8 @@ function RCpage() {
                     case "rvoltage":
                         setMax(initialCharge / value);
                         break;
+                    default:
+                        setMax(-initialCharge / (resistance * value));
                 }
             }
         } else if (name === "resistance") {
@@ -143,6 +151,8 @@ function RCpage() {
                     case "rvoltage":
                         setMax(batteryVoltage);
                         break;
+                    default:
+                        setMax(batteryVoltage / value);
                 }
             } else {
                 setMaxCurrent(-initialCharge / (value * capacitance));
@@ -162,6 +172,8 @@ function RCpage() {
                     case "rvoltage":
                         setMax(initialCharge / capacitance);
                         break;
+                    default:
+                        setMax(-initialCharge / (value * capacitance));
                 }
             }
         } else if (name === "timeRange") {
@@ -187,6 +199,8 @@ function RCpage() {
                     case "rvoltage":
                         setMax(value / capacitance);
                         break;
+                    default:
+                        setMax(-value / (resistance * capacitance));
                 }
             }
         }
@@ -370,6 +384,8 @@ function RCpage() {
                 case "rvoltage":
                     yValue = calculateResistorVoltageDischarge();
                     break;
+                default:
+                    yValue = calculateCurrentDischarge();
             }
         } else {
             switch (graphType) {
@@ -385,6 +401,8 @@ function RCpage() {
                 case "rvoltage":
                     yValue = calculateResistorVoltage();
                     break;
+                default:
+                    yValue = calculateCurrent();
             }
         }
 
@@ -413,6 +431,8 @@ function RCpage() {
                 case "rvoltage":
                     yValue = calculateResistorVoltageDischarge();
                     break;
+                default:
+                    yValue = calculateCurrentDischarge();
             }
         } else {
             switch (graphType) {
@@ -428,12 +448,24 @@ function RCpage() {
                 case "rvoltage":
                     yValue = calculateResistorVoltage();
                     break;
+                default:
+                    yValue = calculateCurrent();
             }
         }
         context.fillStyle = "rgb(255, 255, 237)";
         context.fillRect(0, 480, 1100, 100);
-        context.fillRect(160, 85, context.measureText(resistance + " Ω").width, 40);
-        context.fillRect(375, 235, context.measureText(capacitance + " F").width, 40);
+        context.fillRect(
+            160,
+            85,
+            context.measureText(resistance + " Ω").width,
+            40
+        );
+        context.fillRect(
+            375,
+            235,
+            context.measureText(capacitance + " F").width,
+            40
+        );
         context.fillStyle = "rgb(0, 0, 139)";
         context.font = "20px serif";
         context.fillText(
@@ -858,6 +890,8 @@ function RCpage() {
                                 case "rvoltage":
                                     setMax(batteryVoltage);
                                     break;
+                                default:
+                                    setMax(batteryVoltage / resistance);
                             }
                         } else {
                             setIsDischarging(true);
@@ -883,6 +917,11 @@ function RCpage() {
                                 case "rvoltage":
                                     setMax(initialCharge / capacitance);
                                     break;
+                                default:
+                                    setMax(
+                                        -initialCharge /
+                                            (resistance * capacitance)
+                                    );
                             }
                         }
                     }}
