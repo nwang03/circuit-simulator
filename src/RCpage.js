@@ -475,6 +475,11 @@ function RCpage() {
         );
         context.fillText("Capacitance: " + capacitance + " farads", 50, 525);
         context.fillText("Resistance: " + resistance + " ohms", 50, 550);
+        context.fillText(
+            "Time Constant: " + resistance * capacitance + " seconds",
+            50,
+            575
+        );
         context.fillStyle = "rgb(0, 100, 0)";
         context.font = "40px serif";
         context.fillText(resistance + " Ω", 160, 120);
@@ -643,6 +648,8 @@ function RCpage() {
                     default:
                         resetNumber = 10000;
                 }
+                break;
+            default:
         }
         if (time % resetNumber === 0 && !paused && timeChange !== 0) {
             context.moveTo(600, 250 - (yValue * 200) / Math.abs(max)); // graph
