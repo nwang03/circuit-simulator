@@ -9,18 +9,19 @@ function RLpage() {
         requestID;
     const [timeChange, setTimeChange] = useState(1);
     const [batteryVoltage, setBatteryVoltage] = useState(10);
-    const [capacitance, setCapacitance] = useState(10);
+    const [inductance, setInductance] = useState(10);
     const [resistance, setResistance] = useState(1);
-    const [initialCharge, setInitialCharge] = useState(10);
+    const [initialCurrent, setInitialCurrent] = useState(10);
     const [graphType, setGraphType] = useState("current");
     const [maxCurrent, setMaxCurrent] = useState(batteryVoltage / resistance);
-    const [maxCapacitorVoltage, setMaxCapacitorVoltage] =
+    const [maxInductorVoltage, setMaxInductorVoltage] =
         useState(batteryVoltage);
-    const [maxCapacitorCharge, setMaxCapacitorCharge] = useState(
-        capacitance * batteryVoltage
+    const [maxMagneticFieldEnergy, setMaxMagneticFieldEnergy] = useState(
+        0.5 * inductance * Math.pow(batteryVoltage / resistance, 2)
     );
-    const [maxResistorVoltage, setMaxResistorVoltage] =
-        useState(batteryVoltage);
+    const [maxCurrentDerivative, setMaxCurrentDerivative] = useState(
+        batteryVoltage / inductance
+    );
     const [max, setMax] = useState(maxCurrent);
     const [timeRange, setTimeRange] = useState(450);
     const [isDischarging, setIsDischarging] = useState(false);
@@ -33,11 +34,11 @@ function RLpage() {
         graphType,
         timeChange,
         batteryVoltage,
-        capacitance,
+        inductance,
         resistance,
         timeRange,
         isDischarging,
-        initialCharge,
+        initialCurrent,
     ]);
 
     function handleChange(event) {
@@ -48,15 +49,17 @@ function RLpage() {
                 case "current":
                     setMax(maxCurrent);
                     break;
-                case "charge":
-                    setMax(maxCapacitorCharge);
+                case "energy":
+                    setMax(maxMagneticFieldEnergy);
                     break;
-                case "cvoltage":
-                    setMax(maxCapacitorVoltage);
+                case "ivoltage":
+                    setMax(maxInductorVoltage);
                     break;
-                case "rvoltage":
-                    setMax(maxResistorVoltage);
+                case "di/dt":
+                    setMax(maxCurrentDerivative);
                     break;
+                default:
+                    setMax(maxCurrent);
             }
         } else if (name === "timeChange") {
             setTimeChange(parseInt(value));
@@ -64,131 +67,174 @@ function RLpage() {
             if (Number.isFinite(parseInt(value))) setBatteryVoltage(value);
             if (!isDischarging) {
                 setMaxCurrent(value / resistance);
-                setMaxCapacitorVoltage(value);
-                setMaxCapacitorCharge(capacitance * value);
-                setMaxResistorVoltage(value);
+                setMaxInductorVoltage(value);
+                setMaxMagneticFieldEnergy(
+                    0.5 * inductance * Math.pow(value / resistance, 2)
+                );
+                setMaxCurrentDerivative(value / inductance);
                 switch (graphType) {
                     case "current":
                         setMax(value / resistance);
                         break;
-                    case "charge":
-                        setMax(capacitance * value);
+                    case "energy":
+                        setMax(
+                            0.5 * inductance * Math.pow(value / resistance, 2)
+                        );
                         break;
-                    case "cvoltage":
+                    case "ivoltage":
                         setMax(value);
                         break;
-                    case "rvoltage":
+                    case "di/dt":
+                        setMax(value / inductance);
+                        break;
+                    default:
+                        setMax(value / resistance);
+                }
+            } else {
+                setMaxCurrent(value / resistance);
+                setMaxInductorVoltage(value);
+                setMaxMagneticFieldEnergy(
+                    0.5 * inductance * Math.pow(value / resistance, 2)
+                );
+                setMaxCurrentDerivative(value / inductance);
+                switch (graphType) {
+                    case "current":
+                        setMax(value / resistance);
+                        break;
+                    case "energy":
+                        setMax(
+                            0.5 *
+                                inductance *
+                                Math.pow(value / resistance, 2)
+                        );
+                        break;
+                    case "ivoltage":
                         setMax(value);
                         break;
+                    case "di/dt":
+                        setMax(value / inductance);
+                        break;
+                    default:
+                        setMax(value / resistance);
                 }
             }
-        } else if (name === "capacitance") {
-            if (Number.isFinite(parseInt(value))) setCapacitance(value);
+        } else if (name === "inductance") {
+            if (Number.isFinite(parseInt(value))) setInductance(value);
             if (!isDischarging) {
                 setMaxCurrent(batteryVoltage / resistance);
-                setMaxCapacitorVoltage(batteryVoltage);
-                setMaxCapacitorCharge(batteryVoltage * value);
-                setMaxResistorVoltage(batteryVoltage);
+                setMaxInductorVoltage(batteryVoltage);
+                setMaxMagneticFieldEnergy(
+                    0.5 * value * Math.pow(batteryVoltage / resistance, 2)
+                );
+                setMaxCurrentDerivative(batteryVoltage / value);
                 switch (graphType) {
                     case "current":
                         setMax(batteryVoltage / resistance);
                         break;
-                    case "charge":
-                        setMax(batteryVoltage * value);
+                    case "energy":
+                        setMax(
+                            0.5 *
+                                value *
+                                Math.pow(batteryVoltage / resistance, 2)
+                        );
                         break;
-                    case "cvoltage":
+                    case "ivoltage":
                         setMax(batteryVoltage);
                         break;
-                    case "rvoltage":
-                        setMax(batteryVoltage);
+                    case "di/dt":
+                        setMax(batteryVoltage / value);
                         break;
+                    default:
+                        setMax(batteryVoltage / resistance);
                 }
             } else {
-                setMaxCurrent(-initialCharge / (resistance * value));
-                setMaxCapacitorVoltage(initialCharge / value);
-                setMaxCapacitorCharge(initialCharge);
-                setMaxResistorVoltage(initialCharge / value);
+                setMaxCurrent(batteryVoltage / resistance);
+                setMaxInductorVoltage(batteryVoltage);
+                setMaxMagneticFieldEnergy(
+                    0.5 * value * Math.pow(batteryVoltage / resistance, 2)
+                );
+                setMaxCurrentDerivative(batteryVoltage / value);
                 switch (graphType) {
                     case "current":
-                        setMax(-initialCharge / (resistance * value));
+                        setMax(batteryVoltage / resistance);
                         break;
-                    case "charge":
-                        setMax(initialCharge);
+                    case "energy":
+                        setMax(
+                            0.5 *
+                                value *
+                                Math.pow(batteryVoltage / resistance, 2)
+                        );
                         break;
-                    case "cvoltage":
-                        setMax(initialCharge / value);
+                    case "ivoltage":
+                        setMax(batteryVoltage);
                         break;
-                    case "rvoltage":
-                        setMax(initialCharge / value);
+                    case "di/dt":
+                        setMax(batteryVoltage / value);
                         break;
+                    default:
+                        setMax(batteryVoltage / resistance);
                 }
             }
         } else if (name === "resistance") {
             if (Number.isFinite(parseInt(value))) setResistance(value);
             if (!isDischarging) {
                 setMaxCurrent(batteryVoltage / value);
-                setMaxCapacitorVoltage(batteryVoltage);
-                setMaxCapacitorCharge(batteryVoltage * capacitance);
-                setMaxResistorVoltage(batteryVoltage);
+                setMaxInductorVoltage(batteryVoltage);
+                setMaxMagneticFieldEnergy(
+                    0.5 * inductance * Math.pow(batteryVoltage / value, 2)
+                );
+                setMaxCurrentDerivative(batteryVoltage / inductance);
                 switch (graphType) {
                     case "current":
                         setMax(batteryVoltage / value);
                         break;
-                    case "charge":
-                        setMax(batteryVoltage * capacitance);
+                    case "energy":
+                        setMax(
+                            0.5 *
+                                inductance *
+                                Math.pow(batteryVoltage / value, 2)
+                        );
                         break;
-                    case "cvoltage":
+                    case "ivoltage":
                         setMax(batteryVoltage);
                         break;
-                    case "rvoltage":
-                        setMax(batteryVoltage);
+                    case "di/dt":
+                        setMax(batteryVoltage / inductance);
                         break;
+                    default:
+                        setMax(batteryVoltage / value);
                 }
             } else {
-                setMaxCurrent(-initialCharge / (value * capacitance));
-                setMaxCapacitorVoltage(initialCharge / capacitance);
-                setMaxCapacitorCharge(initialCharge);
-                setMaxResistorVoltage(initialCharge / capacitance);
+                setMaxCurrent(batteryVoltage / value);
+                setMaxInductorVoltage(batteryVoltage);
+                setMaxMagneticFieldEnergy(
+                    0.5 * inductance * Math.pow(batteryVoltage / value, 2)
+                );
+                setMaxCurrentDerivative(batteryVoltage / inductance);
                 switch (graphType) {
                     case "current":
-                        setMax(-initialCharge / (value * capacitance));
+                        setMax(batteryVoltage / value);
                         break;
-                    case "charge":
-                        setMax(initialCharge);
+                    case "energy":
+                        setMax(
+                            0.5 *
+                                inductance *
+                                Math.pow(batteryVoltage / value, 2)
+                        );
                         break;
-                    case "cvoltage":
-                        setMax(initialCharge / capacitance);
+                    case "ivoltage":
+                        setMax(batteryVoltage);
                         break;
-                    case "rvoltage":
-                        setMax(initialCharge / capacitance);
+                    case "di/dt":
+                        setMax(batteryVoltage / inductance);
                         break;
+                    default:
+                        setMax(batteryVoltage / value);
                 }
             }
         } else if (name === "timeRange") {
             clearGraph();
             setTimeRange(parseInt(value));
-        } else if (name === "initialCharge") {
-            if (Number.isFinite(parseInt(value))) setInitialCharge(value);
-            if (isDischarging) {
-                setMaxCurrent(-value / (resistance * capacitance));
-                setMaxCapacitorVoltage(value / capacitance);
-                setMaxCapacitorCharge(value);
-                setMaxResistorVoltage(value / capacitance);
-                switch (graphType) {
-                    case "current":
-                        setMax(-value / (resistance * capacitance));
-                        break;
-                    case "charge":
-                        setMax(value);
-                        break;
-                    case "cvoltage":
-                        setMax(value / capacitance);
-                        break;
-                    case "rvoltage":
-                        setMax(value / capacitance);
-                        break;
-                }
-            }
         }
         window.cancelAnimationFrame(requestID);
         paused = true;
@@ -215,21 +261,31 @@ function RLpage() {
         context.fillStyle = "rgb(255, 255, 237)";
         context.fillRect(140, 45, 220, 10);
         context.fillRect(40, 225, 20, 50);
-        context.fillRect(440, 200, 20, 100);
+        context.fillRect(440, 150, 20, 200);
 
-        // draw zig-zag resistor
+        // draw inductor
         context.beginPath();
         context.lineJoin = "round";
         context.moveTo(170, 50);
-        for(let i = 0; i < 5; i++){
+        for (let i = 0; i < 5; i++) {
             context.beginPath();
             context.arc(170 + 40 * i, 50, 30, 0, Math.PI, 1);
             context.stroke();
         }
-        for(let i = 0; i < 4; i++){
+        for (let i = 0; i < 4; i++) {
             context.beginPath();
             context.ellipse(190 + i * 40, 50, 10, 30, 0, 0, Math.PI, false);
             context.stroke();
+        }
+
+        // draw resistor
+        context.beginPath();
+        context.lineJoin = "miter";
+        context.moveTo(450, 150);
+        for (let i = 0; i < 5; i++) {
+            context.lineTo(475, 150 + i * 40 + 10);
+            context.lineTo(425, 150 + i * 40 + 30);
+            context.lineTo(450, 150 + i * 40 + 40);
         }
 
         // draw lines for switch
@@ -337,15 +393,6 @@ function RLpage() {
         context.setLineDash([]);
         context.lineCap = "butt";
 
-        context.fillStyle = "rgb(255, 255, 237)";
-        context.fillRect(440, 200, 20, 100);
-
-        // draw capacitor
-        context.fillStyle = "rgb(0, 0, 225)";
-        context.fillRect(400, 290, 100, 10);
-        context.fillStyle = "rgb(255, 0, 0)";
-        context.fillRect(400, 200, 100, 10);
-
         graph();
 
         requestID = requestAnimationFrame(animate);
@@ -365,30 +412,34 @@ function RLpage() {
                 case "current":
                     yValue = calculateCurrentDischarge();
                     break;
-                case "charge":
-                    yValue = calculateChargeDischarge();
+                case "energy":
+                    yValue = calculateMagneticFieldEnergyDischarge();
                     break;
-                case "cvoltage":
-                    yValue = calculateCapacitorVoltageDischarge();
+                case "ivoltage":
+                    yValue = calculateInductorVoltageDischarge();
                     break;
-                case "rvoltage":
-                    yValue = calculateResistorVoltageDischarge();
+                case "di/dt":
+                    yValue = calculateCurrentDischargeDerivative();
                     break;
+                default:
+                    yValue = calculateCurrentDischarge();
             }
         } else {
             switch (graphType) {
                 case "current":
                     yValue = calculateCurrent();
                     break;
-                case "charge":
-                    yValue = calculateCharge();
+                case "energy":
+                    yValue = calculateMagneticFieldEnergy();
                     break;
-                case "cvoltage":
-                    yValue = calculateCapacitorVoltage();
+                case "ivoltage":
+                    yValue = calculateInductorVoltage();
                     break;
-                case "rvoltage":
-                    yValue = calculateResistorVoltage();
+                case "di/dt":
+                    yValue = calculateCurrentDerivative();
                     break;
+                default:
+                    yValue = calculateCurrent();
             }
         }
 
@@ -408,30 +459,34 @@ function RLpage() {
                 case "current":
                     yValue = calculateCurrentDischarge();
                     break;
-                case "charge":
-                    yValue = calculateChargeDischarge();
+                case "energy":
+                    yValue = calculateMagneticFieldEnergyDischarge();
                     break;
-                case "cvoltage":
-                    yValue = calculateCapacitorVoltageDischarge();
+                case "ivoltage":
+                    yValue = calculateInductorVoltageDischarge();
                     break;
-                case "rvoltage":
-                    yValue = calculateResistorVoltageDischarge();
+                case "di/dt":
+                    yValue = calculateCurrentDischargeDerivative();
                     break;
+                default:
+                    yValue = calculateCurrentDischarge();
             }
         } else {
             switch (graphType) {
                 case "current":
                     yValue = calculateCurrent();
                     break;
-                case "charge":
-                    yValue = calculateCharge();
+                case "energy":
+                    yValue = calculateMagneticFieldEnergy();
                     break;
-                case "cvoltage":
-                    yValue = calculateCapacitorVoltage();
+                case "ivoltage":
+                    yValue = calculateInductorVoltage();
                     break;
-                case "rvoltage":
-                    yValue = calculateResistorVoltage();
+                case "di/dt":
+                    yValue = calculateCurrentDerivative();
                     break;
+                default:
+                    yValue = calculateCurrent();
             }
         }
         context.fillStyle = "rgb(255, 255, 237)";
@@ -443,8 +498,13 @@ function RLpage() {
             50,
             500
         );
-        context.fillText("Capacitance: " + capacitance + " farads", 50, 525);
+        context.fillText("Inductance: " + inductance + " henries", 50, 525);
         context.fillText("Resistance: " + resistance + " ohms", 50, 550);
+        context.fillText(
+            "Time Constant: " + inductance / resistance + " seconds",
+            50,
+            575
+        );
         context.fillStyle = "rgb(255, 0, 255)";
         if (isDischarging) {
             context.fillText(
@@ -453,23 +513,23 @@ function RLpage() {
                 500
             );
             context.fillText(
-                "Capacitor Charge: " +
-                    calculateChargeDischarge().toFixed(2) +
-                    " coulombs",
+                "Energy in Magnetic Field: " +
+                    calculateMagneticFieldEnergyDischarge().toFixed(2) +
+                    " joules",
                 400,
                 525
             );
             context.fillText(
-                "Capacitor Voltage: " +
-                    calculateCapacitorVoltageDischarge().toFixed(2) +
+                "Inductor Voltage: " +
+                    calculateInductorVoltageDischarge().toFixed(2) +
                     " volts",
                 400,
                 550
             );
             context.fillText(
-                "Resistor Voltage: " +
-                    calculateResistorVoltageDischarge().toFixed(2) +
-                    " volts",
+                "dI/dt: " +
+                    calculateCurrentDischargeDerivative().toFixed(2) +
+                    " amps per second",
                 400,
                 575
             );
@@ -480,23 +540,23 @@ function RLpage() {
                 500
             );
             context.fillText(
-                "Capacitor Charge: " +
-                    calculateCharge().toFixed(2) +
-                    " coulombs",
+                "Energy in Magnetic Field: " +
+                    calculateMagneticFieldEnergy().toFixed(2) +
+                    " joules",
                 400,
                 525
             );
             context.fillText(
-                "Capacitor Voltage: " +
-                    calculateCapacitorVoltage().toFixed(2) +
+                "Inductor Voltage: " +
+                    calculateInductorVoltage().toFixed(2) +
                     " volts",
                 400,
                 550
             );
             context.fillText(
-                "Resistor Voltage: " +
-                    calculateResistorVoltage().toFixed(2) +
-                    " volts",
+                "dI/dt : " +
+                    calculateCurrentDerivative().toFixed(2) +
+                    " amps per second",
                 400,
                 575
             );
@@ -510,9 +570,9 @@ function RLpage() {
             550
         );
         context.fillText(
-            "Max Charge: " +
-                parseFloat(maxCapacitorCharge).toFixed(2) +
-                " coulombs",
+            "Max Magnetic Field Energy: " +
+                parseFloat(maxMagneticFieldEnergy).toFixed(2) +
+                " joules",
             800,
             575
         );
@@ -608,6 +668,8 @@ function RLpage() {
                     default:
                         resetNumber = 10000;
                 }
+                break;
+            default:
         }
         if (time % resetNumber === 0 && !paused && timeChange !== 0) {
             context.moveTo(600, 250 - (yValue * 200) / Math.abs(max)); // graph
@@ -725,56 +787,50 @@ function RLpage() {
     function calculateCurrent() {
         return (
             (batteryVoltage / resistance) *
-            Math.pow(Math.E, -time / (resistance * capacitance))
+            (1 - Math.pow(Math.E, -(resistance * time) / inductance))
         );
     }
 
-    function calculateCharge() {
+    function calculateMagneticFieldEnergy() {
+        return 0.5 * inductance * Math.pow(calculateCurrent(), 2);
+    }
+
+    function calculateInductorVoltage() {
         return (
-            capacitance *
-            batteryVoltage *
-            (1 - Math.pow(Math.E, -time / (resistance * capacitance)))
+            -batteryVoltage *
+            Math.pow(Math.E, -(time * resistance) / inductance)
         );
     }
 
-    function calculateCapacitorVoltage() {
+    function calculateCurrentDerivative() {
         return (
-            batteryVoltage *
-            (1 - Math.pow(Math.E, -time / (resistance * capacitance)))
-        );
-    }
-
-    function calculateResistorVoltage() {
-        return (
-            batteryVoltage *
-            Math.pow(Math.E, -time / (resistance * capacitance))
+            (batteryVoltage / inductance) *
+            Math.pow(Math.E, -(time * resistance) / inductance)
         );
     }
 
     function calculateCurrentDischarge() {
         return (
-            (-initialCharge / (resistance * capacitance)) *
-            Math.pow(Math.E, -time / (resistance * capacitance))
+            (batteryVoltage / resistance) *
+            Math.pow(Math.E, -(time * resistance) / inductance)
         );
     }
 
-    function calculateChargeDischarge() {
+    function calculateMagneticFieldEnergyDischarge() {
+        return 0.5 * inductance * Math.pow(calculateCurrentDischarge(), 2);
+    }
+
+    function calculateInductorVoltageDischarge() {
         return (
-            initialCharge * Math.pow(Math.E, -time / (resistance * capacitance))
+            batteryVoltage * Math.pow(Math.E, -(time * resistance) / inductance)
         );
     }
 
-    function calculateCapacitorVoltageDischarge() {
+    function calculateCurrentDischargeDerivative() {
         return (
-            (initialCharge / capacitance) *
-            Math.pow(Math.E, -time / (resistance * capacitance))
-        );
-    }
-
-    function calculateResistorVoltageDischarge() {
-        return (
-            (initialCharge / capacitance) *
-            Math.pow(Math.E, -time / (resistance * capacitance))
+            -1 *
+            (batteryVoltage / inductance) *
+            Math.pow(Math.E, -(time * resistance) / inductance)
         );
     }
 
@@ -838,48 +894,75 @@ function RLpage() {
                         clearGraph();
                         if (isDischarging) {
                             setIsDischarging(false);
+
                             setMaxCurrent(batteryVoltage / resistance);
-                            setMaxCapacitorVoltage(batteryVoltage);
-                            setMaxCapacitorCharge(batteryVoltage * capacitance);
-                            setMaxResistorVoltage(batteryVoltage);
+                            setMaxInductorVoltage(batteryVoltage);
+                            setMaxMagneticFieldEnergy(
+                                0.5 *
+                                    inductance *
+                                    Math.pow(batteryVoltage / resistance, 2)
+                            );
+                            setMaxCurrentDerivative(
+                                batteryVoltage / inductance
+                            );
+
                             switch (graphType) {
                                 case "current":
                                     setMax(batteryVoltage / resistance);
                                     break;
-                                case "charge":
-                                    setMax(batteryVoltage * capacitance);
+                                case "energy":
+                                    setMax(
+                                        0.5 *
+                                            inductance *
+                                            Math.pow(
+                                                batteryVoltage / resistance,
+                                                2
+                                            )
+                                    );
                                     break;
-                                case "cvoltage":
+                                case "ivoltage":
                                     setMax(batteryVoltage);
                                     break;
-                                case "rvoltage":
-                                    setMax(batteryVoltage);
+                                case "di/dt":
+                                    setMax(batteryVoltage / inductance);
                                     break;
+                                default:
+                                    setMax(batteryVoltage / resistance);
                             }
                         } else {
                             setIsDischarging(true);
-                            setMaxCurrent(
-                                -initialCharge / (resistance * capacitance)
+                            setMaxCurrent(batteryVoltage / resistance);
+                            setMaxInductorVoltage(batteryVoltage);
+                            setMaxMagneticFieldEnergy(
+                                0.5 *
+                                    inductance *
+                                    Math.pow(batteryVoltage / resistance, 2)
                             );
-                            setMaxCapacitorVoltage(initialCharge / capacitance);
-                            setMaxCapacitorCharge(initialCharge);
-                            setMaxResistorVoltage(initialCharge / capacitance);
+                            setMaxCurrentDerivative(
+                                batteryVoltage / inductance
+                            );
                             switch (graphType) {
                                 case "current":
+                                    setMax(batteryVoltage / resistance);
+                                    break;
+                                case "energy":
                                     setMax(
-                                        -initialCharge /
-                                            (resistance * capacitance)
+                                        0.5 *
+                                            inductance *
+                                            Math.pow(
+                                                batteryVoltage / resistance,
+                                                2
+                                            )
                                     );
                                     break;
-                                case "charge":
-                                    setMax(initialCharge);
+                                case "ivoltage":
+                                    setMax(batteryVoltage);
                                     break;
-                                case "cvoltage":
-                                    setMax(initialCharge / capacitance);
+                                case "di/dt":
+                                    setMax(batteryVoltage / inductance);
                                     break;
-                                case "rvoltage":
-                                    setMax(initialCharge / capacitance);
-                                    break;
+                                default:
+                                    setMax(batteryVoltage / resistance);
                             }
                         }
                     }}
@@ -908,33 +991,33 @@ function RLpage() {
                     <input
                         type="radio"
                         name="graphType"
-                        value="charge"
-                        checked={graphType === "charge"}
+                        value="energy"
+                        checked={graphType === "energy"}
                         onChange={handleChange}
                     />
-                    Capacitor charge over time
+                    Potential energy in magnetic field over time
                 </label>
                 <br />
                 <label>
                     <input
                         type="radio"
                         name="graphType"
-                        value="cvoltage"
-                        checked={graphType === "cvoltage"}
+                        value="ivoltage"
+                        checked={graphType === "ivoltage"}
                         onChange={handleChange}
                     />
-                    Capacitor voltage over time
+                    Inductor voltage over time
                 </label>
                 <br />
                 <label>
                     <input
                         type="radio"
                         name="graphType"
-                        value="rvoltage"
-                        checked={graphType === "rvoltage"}
+                        value="di/dt"
+                        checked={graphType === "di/dt"}
                         onChange={handleChange}
                     />
-                    Resistor voltage over time
+                    Rate of change of current over time
                 </label>
                 <br />
                 <br />
@@ -960,11 +1043,11 @@ function RLpage() {
                     onChange={handleChange}
                 />
                 <br />
-                Inductance {" (" + capacitance + "  henries): "}
+                Inductance {" (" + inductance + "  henries): "}
                 <input
                     type="text"
                     placeholder="Inductance (Henries)"
-                    name="capacitance"
+                    name="inductance"
                     onChange={handleChange}
                 />
                 <br />
@@ -973,15 +1056,6 @@ function RLpage() {
                     type="text"
                     placeholder="Resistance (Ohms)"
                     name="resistance"
-                    onChange={handleChange}
-                />
-                <br />
-                Capacitor Initial Charge - only for discharging{" "}
-                {" (" + initialCharge + " coulombs): "}
-                <input
-                    type="text"
-                    placeholder="Charge (Coulombs)"
-                    name="initialCharge"
                     onChange={handleChange}
                 />
                 <br />
