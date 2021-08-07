@@ -103,9 +103,7 @@ function RLpage() {
                         break;
                     case "energy":
                         setMax(
-                            0.5 *
-                                inductance *
-                                Math.pow(value / resistance, 2)
+                            0.5 * inductance * Math.pow(value / resistance, 2)
                         );
                         break;
                     case "ivoltage":
@@ -382,9 +380,15 @@ function RLpage() {
         context.lineCap = "round";
         context.lineWidth = 15;
         if (!paused) {
-            if (isDischarging)
-                context.lineDashOffset += calculateCurrentDischarge();
-            else context.lineDashOffset += calculateCurrent();
+            if (isDischarging) {
+                if (calculateCurrentDischarge() <= 35)
+                    context.lineDashOffset += calculateCurrentDischarge();
+                else context.lineDashOffset += 35;
+            } else {
+                if (calculateCurrent() <= 35)
+                    context.lineDashOffset += calculateCurrent();
+                else context.lineDashOffset += 35;
+            }
             time += timeChange;
         }
         context.strokeStyle = "rgb(135, 206, 235)";
@@ -505,7 +509,12 @@ function RLpage() {
             50,
             575
         );
+        context.fillStyle = "rgb(0, 100, 0)";
+        context.font = "40px serif";
+        context.fillText(inductance + " H", 160, 120);
+        context.fillText(resistance + " Ω", 350, 270);
         context.fillStyle = "rgb(255, 0, 255)";
+        context.font = "20px serif";
         if (isDischarging) {
             context.fillText(
                 "Current: " + calculateCurrentDischarge().toFixed(2) + " amps",
@@ -572,8 +581,8 @@ function RLpage() {
         context.fillText(
             "Max Magnetic Field Energy: " +
                 parseFloat(maxMagneticFieldEnergy).toFixed(2) +
-                " joules",
-            800,
+                " J",
+            750,
             575
         );
         let resetNumber;
