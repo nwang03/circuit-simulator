@@ -11,7 +11,6 @@ function RLpage() {
     const [batteryVoltage, setBatteryVoltage] = useState(10);
     const [inductance, setInductance] = useState(10);
     const [resistance, setResistance] = useState(1);
-    const [initialCurrent, setInitialCurrent] = useState(10);
     const [graphType, setGraphType] = useState("current");
     const [maxCurrent, setMaxCurrent] = useState(batteryVoltage / resistance);
     const [maxInductorVoltage, setMaxInductorVoltage] =
@@ -37,8 +36,7 @@ function RLpage() {
         inductance,
         resistance,
         timeRange,
-        isDischarging,
-        initialCurrent,
+        isDischarging
     ]);
 
     function handleChange(event) {
@@ -257,7 +255,7 @@ function RLpage() {
 
         // clear gaps for resistor, battery, then capacitor
         context.fillStyle = "rgb(255, 255, 237)";
-        context.fillRect(140, 45, 220, 10);
+        context.fillRect(143, 45, 214, 10);
         context.fillRect(40, 225, 20, 50);
         context.fillRect(440, 150, 20, 200);
 
