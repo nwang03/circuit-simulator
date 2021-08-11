@@ -404,7 +404,7 @@ function LCpage() {
         context.fillStyle = "rgb(0, 100, 0)";
         context.font = "40px serif";
         context.fillText(inductance + " H", 100, 270);
-        context.fillText(capacitance + " F, " + maxCapacitorCharge + " C", 375, 270);
+        context.fillText(capacitance + " F", 375, 270);
         context.fillStyle = "rgb(255, 0, 255)";
         context.font = "20px serif";
         context.fillText(
