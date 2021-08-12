@@ -63,7 +63,13 @@ function RCpage() {
         } else if (name === "timeChange") {
             setTimeChange(parseInt(value));
         } else if (name === "batteryVoltage") {
-            if (Number.isFinite(parseInt(value))) setBatteryVoltage(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === batteryVoltage
+            )
+                return;
+            setBatteryVoltage(value);
             if (!isDischarging) {
                 setMaxCurrent(value / resistance);
                 setMaxCapacitorVoltage(value);
@@ -87,7 +93,13 @@ function RCpage() {
                 }
             }
         } else if (name === "capacitance") {
-            if (Number.isFinite(parseInt(value))) setCapacitance(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === capacitance
+            )
+                return;
+            setCapacitance(value);
             if (!isDischarging) {
                 setMaxCurrent(batteryVoltage / resistance);
                 setMaxCapacitorVoltage(batteryVoltage);
@@ -132,7 +144,13 @@ function RCpage() {
                 }
             }
         } else if (name === "resistance") {
-            if (Number.isFinite(parseInt(value))) setResistance(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === resistance
+            )
+                return;
+            setResistance(value);
             if (!isDischarging) {
                 setMaxCurrent(batteryVoltage / value);
                 setMaxCapacitorVoltage(batteryVoltage);
@@ -180,7 +198,13 @@ function RCpage() {
             clearGraph();
             setTimeRange(parseInt(value));
         } else if (name === "initialCharge") {
-            if (Number.isFinite(parseInt(value))) setInitialCharge(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === initialCharge
+            )
+                return;
+            setInitialCharge(value);
             if (isDischarging) {
                 setMaxCurrent(-value / (resistance * capacitance));
                 setMaxCapacitorVoltage(value / capacitance);

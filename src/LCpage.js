@@ -66,7 +66,13 @@ function LCpage() {
         } else if (name === "timeChange") {
             setTimeChange(parseInt(value));
         } else if (name === "charge") {
-            if (Number.isFinite(parseInt(value))) setMaxCapacitorCharge(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === maxCapacitorCharge
+            )
+                return;
+            setMaxCapacitorCharge(value);
             setMaxCurrent((1 / Math.sqrt(inductance * capacitance)) * value);
             setMaxElectricFieldEnergy(Math.pow(value, 2) / (2 * capacitance));
             setMaxMagneticFieldEnergy(
@@ -102,7 +108,13 @@ function LCpage() {
                     setMax((1 / Math.sqrt(inductance * capacitance)) * value);
             }
         } else if (name === "capacitance") {
-            if (Number.isFinite(parseInt(value))) setCapacitance(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === capacitance
+            )
+                return;
+            setCapacitance(value);
             setMaxCurrent(
                 (1 / Math.sqrt(inductance * value)) * maxCapacitorCharge
             );
@@ -147,7 +159,13 @@ function LCpage() {
                     );
             }
         } else if (name === "inductance") {
-            if (Number.isFinite(parseInt(value))) setInductance(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === inductance
+            )
+                return;
+            setInductance(value);
             setMaxCurrent(
                 (1 / Math.sqrt(value * capacitance)) * maxCapacitorCharge
             );
@@ -588,7 +606,7 @@ function LCpage() {
             ctx.fillRect(
                 595,
                 250 - i * 50,
-                -1 * ctx.measureText((i / 4) * max).width,
+                -1 * ctx.measureText(((i / 4) * max).toFixed(6)).width,
                 10
             );
         }
@@ -598,7 +616,7 @@ function LCpage() {
             ctx.fillRect(
                 595,
                 250 + i * 50,
-                -1 * ctx.measureText((i / 4) * max).width,
+                -1 * ctx.measureText(((i / 4) * max).toFixed(6)).width,
                 10
             );
         }

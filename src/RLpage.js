@@ -36,7 +36,7 @@ function RLpage() {
         inductance,
         resistance,
         timeRange,
-        isDischarging
+        isDischarging,
     ]);
 
     function handleChange(event) {
@@ -62,7 +62,13 @@ function RLpage() {
         } else if (name === "timeChange") {
             setTimeChange(parseInt(value));
         } else if (name === "batteryVoltage") {
-            if (Number.isFinite(parseInt(value))) setBatteryVoltage(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === batteryVoltage
+            )
+                return;
+            setBatteryVoltage(value);
             if (!isDischarging) {
                 setMaxCurrent(value / resistance);
                 setMaxInductorVoltage(value);
@@ -115,7 +121,13 @@ function RLpage() {
                 }
             }
         } else if (name === "inductance") {
-            if (Number.isFinite(parseInt(value))) setInductance(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === inductance
+            )
+                return;
+            setInductance(value);
             if (!isDischarging) {
                 setMaxCurrent(batteryVoltage / resistance);
                 setMaxInductorVoltage(batteryVoltage);
@@ -172,7 +184,13 @@ function RLpage() {
                 }
             }
         } else if (name === "resistance") {
-            if (Number.isFinite(parseInt(value))) setResistance(value);
+            if (
+                Number.isNaN(parseFloat(value)) ||
+                !isFinite(value) ||
+                value === resistance
+            )
+                return;
+            setResistance(value);
             if (!isDischarging) {
                 setMaxCurrent(batteryVoltage / value);
                 setMaxInductorVoltage(batteryVoltage);
