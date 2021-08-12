@@ -69,7 +69,7 @@ function LCpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === maxCapacitorCharge
+                value === maxCapacitorCharge || value <= 0
             )
                 return;
             setMaxCapacitorCharge(value);
@@ -111,7 +111,7 @@ function LCpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === capacitance
+                value === capacitance || value <= 0
             )
                 return;
             setCapacitance(value);
@@ -162,7 +162,7 @@ function LCpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === inductance
+                value === inductance || value <= 0
             )
                 return;
             setInductance(value);

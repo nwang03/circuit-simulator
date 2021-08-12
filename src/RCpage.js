@@ -96,7 +96,7 @@ function RCpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === capacitance
+                value === capacitance || value <= 0
             )
                 return;
             setCapacitance(value);
@@ -147,7 +147,7 @@ function RCpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === resistance
+                value === resistance || value <= 0
             )
                 return;
             setResistance(value);
@@ -201,7 +201,7 @@ function RCpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === initialCharge
+                value === initialCharge || value <= 0
             )
                 return;
             setInitialCharge(value);
