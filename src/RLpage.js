@@ -65,7 +65,8 @@ function RLpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === batteryVoltage || value <= 0
+                value === batteryVoltage ||
+                value <= 0
             )
                 return;
             setBatteryVoltage(value);
@@ -124,7 +125,8 @@ function RLpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === inductance || value <= 0
+                value === inductance ||
+                value <= 0
             )
                 return;
             setInductance(value);
@@ -187,7 +189,8 @@ function RLpage() {
             if (
                 Number.isNaN(parseFloat(value)) ||
                 !isFinite(value) ||
-                value === resistance || value <= 0
+                value === resistance ||
+                value <= 0
             )
                 return;
             setResistance(value);
