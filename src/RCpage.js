@@ -478,18 +478,18 @@ function RCpage() {
         }
         context.fillStyle = "rgb(255, 255, 237)";
         context.fillRect(0, 480, 1100, 100);
-        context.fillRect(
-            160,
-            85,
-            context.measureText(resistance + " Ω").width,
-            40
-        );
-        context.fillRect(
-            375,
-            235,
-            context.measureText(capacitance + " F").width,
-            40
-        );
+        // context.fillRect(
+        //     160,
+        //     85,
+        //     context.measureText(resistance + " Ω").width,
+        //     40
+        // );
+        // context.fillRect(
+        //     375,
+        //     235,
+        //     context.measureText(capacitance + " F").width,
+        //     40
+        // );
         context.fillStyle = "rgb(0, 0, 139)";
         context.font = "20px serif";
         context.fillText(
@@ -506,6 +506,7 @@ function RCpage() {
         );
         context.fillStyle = "rgb(0, 100, 0)";
         context.font = "40px serif";
+        context.fillText(batteryVoltage + " V", 75, 260);
         context.fillText(resistance + " Ω", 160, 120);
         context.fillText(capacitance + " F", 375, 270);
         context.fillStyle = "rgb(255, 0, 255)";

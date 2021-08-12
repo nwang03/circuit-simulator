@@ -527,6 +527,7 @@ function RLpage() {
         );
         context.fillStyle = "rgb(0, 100, 0)";
         context.font = "40px serif";
+        context.fillText(batteryVoltage + " V", 75, 260);
         context.fillText(inductance + " H", 160, 120);
         context.fillText(resistance + " Ω", 350, 270);
         context.fillStyle = "rgb(255, 0, 255)";
