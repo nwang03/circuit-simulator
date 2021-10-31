@@ -53,6 +53,22 @@ code {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.homePageCanvas{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#homePageLayer1{
+    z-index: 1;
+}
+
+#homePageLayer2{
+    z-index: 2;
 }
 
 #buttonStyle {
