@@ -1,4 +1,5 @@
-# Circuit Simulator - https://circuit-simulator.netlify.app/
+# Circuit Simulator
+https://circuit-simulator.netlify.app/ <br/>
 This is a website meant for simulating the behavior of RC, RL, and LC circuit behavior through animations and graphing corresponding values in real time. <br />
 ## Home Page
 Hovering over each button gives a preview of the circuit diagram and animation. <br />
